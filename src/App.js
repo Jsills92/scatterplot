@@ -1,6 +1,4 @@
-import React from 'react';
-import './App.css';
-import ScatterplotGraph from './components/ScatterplotGraph'; // Corrected import
+import ScatterplotGraph from './components/ScatterplotGraph'; // Ensure the import is correct
 
 function App() {
   return (
