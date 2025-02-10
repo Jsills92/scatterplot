@@ -43,13 +43,14 @@ const ScatterplotGraph = () => {
         svg.selectAll("*").remove();
       
         // Define the x and y scales
-        const xScale = d3.scaleTime()
-          .domain([d3.min(data, d => new Date(d["Year"], 0, 1)), d3.max(data, d => new Date(d["Year"], 0, 1))])
+        const xScale = d3.scaleLinear()
+          .domain([d3.min(data, d => new Date(1993, 0, 1)), d3.max(data, d => new Date(2016, 0, 1))])
           .range([margin.left, width - margin.right]);
       
-        const yScale = d3.scaleLinear()
-          .domain([0, d3.max(data, d => d["Time"])]) // You may need to convert Time to minutes/seconds 
-          .range([height - margin.bottom, margin.bottom ]);
+          const yScale = d3.scaleLinear()
+          .domain([36.50 * 60, d3.max(data, d => d.Seconds)]) // Invert range so faster times are higher
+          .range([height - margin.bottom, margin.bottom]); // Use margin.top to avoid cutting off points
+        
       
         // Define the x and y axes using the scales
         const xAxis = d3.axisBottom(xScale)
@@ -58,33 +59,57 @@ const ScatterplotGraph = () => {
       
         const yAxis = d3.axisLeft(yScale)
           .ticks(5) // Adjust the number of ticks based on your needs
-          .tickFormat(d3.timeFormat("%M:%S")); // Format the y-axis tick labels as time (minutes:seconds)
+          .tickFormat(d => {
+            const minutes = Math.floor(d / 60);
+            const seconds = d % 60;
+            return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+  });
+ // Format the y-axis tick labels as time (minutes:seconds)
       
         // Append the x and y axes to the SVG container
         svg.append("g")
           .attr("id", "x-axis")
           .attr("transform", `translate(0, ${height - margin.bottom})`)
           .call(xAxis);
+
+        svg.append("text")
+            .attr("x", width / 2)
+            .attr("y", height - 10)
+            .attr("text-anchor", "middle")
+            .style("font-size", "14px")
+            .text("Year");
+
       
         svg.append("g")
           .attr("id", "y-axis")
           .attr("transform", `translate(${margin.left}, 0)`)
           .call(yAxis);
 
-          // Add the circles (dots) for each data point
-        svg.selectAll(".dot")
-        .data(data)
-        .enter()
-        .append("circle")
-        .attr("class", "dot")
-        .attr("data-xvalue", d => new Date(d["Year"], 0, 1)) // Set the x value (year)
-        .attr("data-yvalue", d => new Date(`1970-01-01T${d["Time"]}Z`)) // Set the y value (time, converted to Date)
-        .attr("cx", d => xScale(new Date(d["Year"], 0, 1))) // X coordinate based on xScale
-        .attr("cy", d => yScale(new Date(`1970-01-01T${d["Time"]}Z`))) // Y coordinate based on yScale
-        .attr("r", 5) // Radius of the circles
-        .style("fill", "steelblue") // Circle color
-        .style("opacity", 0.7)
-        .on("mouseover", function(event, d) {
+          svg.append("text")
+          .attr("x", -height / 2) // Centers the label along the y-axis
+          .attr("y", margin.left / 3) // Moves it slightly away from the axis
+          .attr("transform", "rotate(-90)") 
+          .attr("text-anchor", "middle")
+          .style("font-size", "14px")
+          .text("Time in Minutes");
+
+          // Remove old circles before appending new ones
+svg.selectAll(".dot").remove(); 
+
+// Append new circles
+svg.selectAll(".dot")
+  .data(data)
+  .enter()
+  .append("circle")
+  .attr("class", "dot")
+  .attr("data-xvalue", d => new Date(d.Year, 0, 1))
+  .attr("data-yvalue", d => d.Seconds) // Keep it as numeric seconds
+  .attr("cx", d => xScale(new Date(d.Year, 0, 1)))
+  .attr("cy", d => yScale(d.Seconds)) // This should now work correctly
+  .attr("r", 5)
+  .style("fill", "steelblue")
+  .style("opacity", 0.7)
+  .on("mouseover", function(event, d) {
             // Show the tooltip
             tooltip.style("visibility", "visible")
               .attr("data-year", d["Year"]) // Set the data-year attribute
