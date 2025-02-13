@@ -36,3 +36,14 @@
     transform: rotate(360deg);
   }
 }
+
+#tooltip {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 5px;
+  border-radius: 5px;
+  font-size: 12px;
+  display: none; /* Ensures it's hidden initially */
+  z-index: 9999;
+}

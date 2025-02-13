@@ -6,7 +6,7 @@ const ScatterplotGraph = () => {
 
     useEffect(() => {
 
-        const tooltip = d3.select("body")
+        const tooltip = d3.select("#tooltip")
             .append("div")
             .attr("id", "tooltip")
             .style("position", "absolute")
@@ -43,28 +43,28 @@ const ScatterplotGraph = () => {
         svg.selectAll("*").remove();
       
         // Define the x and y scales
-        const xScale = d3.scaleLinear()
-          .domain([d3.min(data, d => new Date(1993, 0, 1)), d3.max(data, d => new Date(2016, 0, 1))])
+        const xScale = d3.scaleTime()
+          .domain([d3.min(data, d => new Date(1994, 0, 1)), d3.max(data, d => new Date(2016, 0, 1))])
           .range([margin.left, width - margin.right]);
       
-          const yScale = d3.scaleLinear()
-          .domain([36.50 * 60, d3.max(data, d => d.Seconds)]) // Invert range so faster times are higher
-          .range([height - margin.bottom, margin.bottom]); // Use margin.top to avoid cutting off points
+          const yScale = d3.scaleTime()
+    .domain([
+        d3.min(data, d => new Date(0, 0, 0, 0, 0, d.Seconds)), // Convert min seconds into a Date object
+        d3.max(data, d => new Date(0, 0, 0, 0, 0, d.Seconds))  // Convert max seconds into a Date object
+    ])
+    .range([height - margin.bottom, margin.top]); // Ensure proper vertical scaling
+
         
       
         // Define the x and y axes using the scales
         const xAxis = d3.axisBottom(xScale)
-          .ticks(5) // Adjust the number of ticks based on needs
+          .ticks(12) // Adjust the number of ticks based on needs
           .tickFormat(d3.timeFormat("%Y")); // Format the tick labels as years
       
-        const yAxis = d3.axisLeft(yScale)
-          .ticks(5) // Adjust the number of ticks based on your needs
-          .tickFormat(d => {
-            const minutes = Math.floor(d / 60);
-            const seconds = d % 60;
-            return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
-  });
- // Format the y-axis tick labels as time (minutes:seconds)
+          const yAxis = d3.axisLeft(yScale).tickFormat(d3.timeFormat("%M:%S"))
+          .ticks(12); // Adjust the number of ticks based on your needs
+     
+
       
         // Append the x and y axes to the SVG container
         svg.append("g")
@@ -96,6 +96,7 @@ const ScatterplotGraph = () => {
           // Remove old circles before appending new ones
 svg.selectAll(".dot").remove(); 
 
+
 // Append new circles
 svg.selectAll(".dot")
   .data(data)
@@ -103,30 +104,32 @@ svg.selectAll(".dot")
   .append("circle")
   .attr("class", "dot")
   .attr("data-xvalue", d => new Date(d.Year, 0, 1))
-  .attr("data-yvalue", d => d.Seconds) // Keep it as numeric seconds
-  .attr("cx", d => xScale(new Date(d.Year, 0, 1)))
-  .attr("cy", d => yScale(d.Seconds)) // This should now work correctly
+  .attr("data-yvalue", d => new Date(0, 0, 0, 0, 0, d.Seconds)) // `data-yvalue` must match the scale
+  .attr("cx", d => xScale(new Date(d["Year"], 0, 1)))
+  .attr("cy", d => yScale(new Date(0, 0, 0, 0, 0, d.Seconds))) // Convert each data point into a Date object
   .attr("r", 5)
   .style("fill", "steelblue")
   .style("opacity", 0.7)
   .on("mouseover", function(event, d) {
-            // Show the tooltip
-            tooltip.style("visibility", "visible")
-              .attr("data-year", d["Year"]) // Set the data-year attribute
-              .html(`
-                <strong>Name:</strong> ${d["Name"]}<br>
-                <strong>Year:</strong> ${d["Year"]}<br>
-                <strong>Time:</strong> ${d["Time"]}
-              `);
-      
-            // Position the tooltip near the cursor
-            tooltip.style("top", (event.pageY + 5) + "px")
-              .style("left", (event.pageX + 5) + "px");
-          })
-          .on("mouseout", function() {
-            // Hide the tooltip when the mouse leaves
-            tooltip.style("visibility", "hidden");
-          });
+    tooltip.attr("id", "tooltip") // Ensure ID exists
+      .attr("data-year", d.Year) // Critical for passing test
+      .style("visibility", "visible") // Show tooltip
+      .html(`
+        <strong>Name:</strong> ${d.Name}<br>
+        <strong>Year:</strong> ${d.Year}<br>
+        <strong>Time:</strong> ${d.Time}
+      `);
+
+    // Position tooltip near cursor
+    tooltip.style("top", (event.pageY + 10) + "px")
+      .style("left", (event.pageX + 10) + "px");
+})
+.on("mouseout", function() {
+    tooltip.style("visibility", "hidden");
+});
+
+
+
 
       };
      return <svg ref={svgRef}></svg>; 
