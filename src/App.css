@@ -37,13 +37,34 @@
   }
 }
 
-#tooltip {
-  position: absolute;
-  background-color: rgba(0, 0, 0, 0.8);
-  color: white;
-  padding: 5px;
-  border-radius: 5px;
-  font-size: 12px;
-  display: none; /* Ensures it's hidden initially */
-  z-index: 9999;
+/* Full-screen grid layout */
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  font-family: Arial, sans-serif;
 }
+
+/* Container to keep everything centered */
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center; /* Centers text */
+}
+
+/* Optional: Space out your text */
+h1, h2 {
+  margin: 10px;
+}
+
+/* SVG container styling */
+svg {
+  width: 80%;  /* Adjust the width */
+  height: 500px; /* Set a height if needed */
+  max-width: 800px;  /* Limit the max size */
+}
+
