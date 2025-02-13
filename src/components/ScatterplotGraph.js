@@ -47,13 +47,14 @@ const ScatterplotGraph = () => {
 
         // Define the x and y scales
         const xScale = d3.scaleTime()
-            .domain([d3.min(data, d => new Date(1994, 0, 1)), d3.max(data, d => new Date(2016, 0, 1))])
+            .domain([d3.min(data, d => new Date(1993, 0, 1)), d3.max(data, d => new Date(2016, 0, 1))])
             .range([margin.left, width - margin.right]);
 
         const yScale = d3.scaleTime()
             .domain([
-                d3.min(data, d => new Date(0, 0, 0, 0, 0, d.Seconds)), 
-                d3.max(data, d => new Date(0, 0, 0, 0, 0, d.Seconds))
+                d3.max(data, d => new Date(0, 0, 0, 0, 0, d.Seconds)),
+                d3.min(data, d => new Date(0, 0, 0, 0, 0, d.Seconds)) 
+                
             ])
             .range([height - margin.bottom, margin.top]);
 
