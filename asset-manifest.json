@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/scatterplot/static/css/main.e6c13ad2.css",
+    "main.js": "/scatterplot/static/js/main.ae4df86d.js",
+    "static/js/156.d3b351e8.chunk.js": "/scatterplot/static/js/156.d3b351e8.chunk.js",
+    "index.html": "/scatterplot/index.html",
+    "main.e6c13ad2.css.map": "/scatterplot/static/css/main.e6c13ad2.css.map",
+    "main.ae4df86d.js.map": "/scatterplot/static/js/main.ae4df86d.js.map",
+    "156.d3b351e8.chunk.js.map": "/scatterplot/static/js/156.d3b351e8.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e6c13ad2.css",
+    "static/js/main.ae4df86d.js"
+  ]
+}
