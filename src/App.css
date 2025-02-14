@@ -42,13 +42,15 @@ body, html {
   margin: 0;
   padding: 0;
   height: 100%;
-  display: grid;
-  place-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-family: Arial, sans-serif;
 }
 
 /* Container to keep everything centered */
 .container {
+  text-align: center; /* Centers the text */
   display: flex;
   flex-direction: column;
   justify-content: center;
